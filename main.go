@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"math"
-	"time"
 )
 
 var (
@@ -19,11 +18,7 @@ func main() {
 	seconds := duration.Seconds()
 	secPerKm := seconds / *distance
 
-	roundedSecPerKmRoun := math.Ceil(secPerKm)
-	pace, err := time.ParseDuration(fmt.Sprintf("%vs", roundedSecPerKmRoun))
-	if err != nil {
-		fmt.Println(err)
-	}
+	pace := formatPace(secPerKm)
 	fmt.Printf("Pace (min/km): %v\n", pace)
 
 	speed := math.Floor(100*3600.0/secPerKm) / 100.0
@@ -32,4 +27,10 @@ func main() {
 	if *endo {
 		fmt.Printf("Distance: %vkm, ~%vmin/km, ~%vkm/h\n", *distance, pace, speed)
 	}
+}
+
+func formatPace(secsPerKm float64) string {
+	secs := int(secsPerKm)
+	mins, secs := int(math.Floor(float64(secs/60))), secs%60
+	return fmt.Sprintf("%02d:%02d", int(mins), int(secs))
 }
